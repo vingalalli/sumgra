@@ -1,16 +1,16 @@
 /*
  *  Copyright (c) 2015 Vijay Ingalalli
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -28,22 +28,22 @@ IndexManager::~IndexManager()
 }
 
 
-void IndexManager::BuildIndexes(GraphParameter& dataGraphInfo, IndexType& indexType)
+void IndexManager::buildIndexes(GraphParameter& dataGraphInfo, IndexType& indexType)
 {
-    SortSignature(dataGraphInfo.neighbourSign, dataGraphInfo.orderedNodes, dataGraphInfo.nNodes); // sort the neighborhood signature with decreasing size of the number of neighbors |
+    sortSignature(dataGraphInfo.neighbourSign, dataGraphInfo.orderedNodes, dataGraphInfo.nNodes); // sort the neighborhood signature with decreasing size of the number of neighbors |
 
-    BuildAttHash(dataGraphInfo.attributes, indexType.attributeHash);
-    BuildSynTrie(dataGraphInfo.neighbourSign, dataGraphInfo.nNodes, indexType.synopsesTrie);
+    buildAttHash(dataGraphInfo.attributes, indexType.attributeHash);
+    buildSynTrie(dataGraphInfo.neighbourSign, dataGraphInfo.nNodes, indexType.synopsesTrie);
 
     indexType.bitSetMap.resize(dataGraphInfo.nNodes);
-    BuildBitSign(dataGraphInfo.neighbourSign, dataGraphInfo.nNodes, indexType.bitSetMap);
+    buildBitSign(dataGraphInfo.neighbourSign, dataGraphInfo.nNodes, indexType.bitSetMap);
 
     indexType.neighborTrie.resize(dataGraphInfo.nNodes);
-    BuildNeighTrie(dataGraphInfo.adjacencyList, dataGraphInfo.eLabelMap, dataGraphInfo.nNodes, indexType.neighborTrie);
+    buildNeighTrie(dataGraphInfo.adjacencyList, dataGraphInfo.eLabelMap, dataGraphInfo.nNodes, indexType.neighborTrie);
 
 }
 
-void IndexManager::BuildAttHash(const VecOfSet& attSign, AttMap& attributeHash)  // A vertex with no attribute should have '-1' assigned to it in the text file |
+void IndexManager::buildAttHash(const VecOfSet& attSign, AttMap& attributeHash)  // A vertex with no attribute should have '-1' assigned to it in the text file |
 {
     for (size_t i = 0; i < attSign.size(); ++i) {
         if ( !(attSign[i].size() == 1 && (*attSign[i].begin()) == -1) ) { // map only vertexes that have labels |
@@ -61,7 +61,7 @@ void IndexManager::BuildAttHash(const VecOfSet& attSign, AttMap& attributeHash) 
     }
 }
 
-void IndexManager::QueryAttHash(const VecOfSet& queryAtt, const AttMap& attributeHash, VecOfSet&  attMatches)
+void IndexManager::queryAttHash(const VecOfSet& queryAtt, const AttMap& attributeHash, VecOfSet&  attMatches)
 {
     for (size_t i = 0; i < queryAtt.size(); ++i) {
         if ( !(queryAtt[i].size() == 1 && (*queryAtt[i].begin()) == -1) ) { // only if the vertex has labels |
@@ -81,7 +81,7 @@ void IndexManager::QueryAttHash(const VecOfSet& queryAtt, const AttMap& attribut
     }
 }
 
-void IndexManager::CreateSynopses(const std::vector<std::set<int>>& signature, std::vector<short>& synopses)
+void IndexManager::createSynopses(const std::vector<std::set<int>>& signature, std::vector<short>& synopses)
 {
     std::set<int> uniqueDim;
     int allDim = 0;
@@ -112,7 +112,7 @@ BoundingBox IndexManager::bounds(std::vector<short> synopses)
 	return bb;
 }
 
-void IndexManager::SortSignature(EdgeLabel& neighbourSign, std::vector<int>& orderedNodes, const int& elements)
+void IndexManager::sortSignature(EdgeLabel& neighbourSign, std::vector<int>& orderedNodes, const int& elements)
 {
     std::vector<int> nEdges(elements);
     for(size_t i = 0; i < elements; ++i) {
@@ -131,7 +131,7 @@ void IndexManager::SortSignature(EdgeLabel& neighbourSign, std::vector<int>& ord
     orderedNodes = sortIndex(nEdges); // sort all the data vertices wrt data adjaceny list of each vertex |
 }
 
-void IndexManager::BuildSynTrie(const EdgeLabel& dataSignature, const int& dataNodes, RTree& synopsesTrie)
+void IndexManager::buildSynTrie(const EdgeLabel& dataSignature, const int& dataNodes, RTree& synopsesTrie)
 {
     std::vector<short> zero(SYN_SIZE);
     int i =0;
@@ -140,14 +140,14 @@ void IndexManager::BuildSynTrie(const EdgeLabel& dataSignature, const int& dataN
             synopsesTrie.Insert(i, bounds(zero)); // if the node has no edges
         else {
             std::vector<short> synopses(SYN_SIZE);
-            CreateSynopses((*it), synopses);
+            createSynopses((*it), synopses);
             synopsesTrie.Insert(i, bounds(synopses));
         }
         ++i;
     }
 }
 
-void IndexManager::BuildBitSign(const EdgeLabel& dataSignature, const int& dataNodes, EdgeLabelBit& dataBitSet)
+void IndexManager::buildBitSign(const EdgeLabel& dataSignature, const int& dataNodes, EdgeLabelBit& dataBitSet)
 {
     for(size_t i = 0; i < dataNodes; ++i) {
         std::vector<std::bitset<DIM> > dataBitSetTemp(dataSignature[i].size());
@@ -162,7 +162,7 @@ void IndexManager::BuildBitSign(const EdgeLabel& dataSignature, const int& dataN
     }
 }
 
-void IndexManager::BuildNeighTrie(const Vector2D& adjacencyList, const EdgeLabelMap& eLabelMap, const int& dataNodes, std::vector<Trie*>& nbrIndex)
+void IndexManager::buildNeighTrie(const Vector2D& adjacencyList, const EdgeLabelMap& eLabelMap, const int& dataNodes, std::vector<Trie*>& nbrIndex)
 {
     for(int m = 0; m < dataNodes; ++m) {
         Trie *trieSignature = new Trie();
@@ -180,10 +180,10 @@ void IndexManager::BuildNeighTrie(const Vector2D& adjacencyList, const EdgeLabel
 }
 
 
-void IndexManager::QuerySynTrie(const std::vector<std::set<int>>& initSignature, RTree& synopsesTrie, std::vector<int>& initialMatches)
+void IndexManager::querySynTrie(const std::vector<std::set<int>>& initSignature, RTree& synopsesTrie, std::vector<int>& initialMatches)
 {
     std::vector<short> qSynopses(SYN_SIZE);
-    CreateSynopses(initSignature, qSynopses);
+    createSynopses(initSignature, qSynopses);
     BoundingBox bound = bounds(qSynopses);
     Visitor x = synopsesTrie.Query(RTree::AcceptEnclosing(bound), Visitor());
     if (!x.edgeIndices.empty())
@@ -191,7 +191,7 @@ void IndexManager::QuerySynTrie(const std::vector<std::set<int>>& initSignature,
 }
 
 
-void IndexManager::QueryNeighTrie(Trie* t, const std::set<int>& multi_e, std::vector<int>& MatchedIds)
+void IndexManager::queryNeighTrie(Trie* t, const std::set<int>& multi_e, std::vector<int>& MatchedIds)
 {
     /// Check if all the elements of multiedges are found in this tree
     for(auto it = multi_e.begin(); it != multi_e.end(); ++it)
@@ -233,4 +233,3 @@ void IndexManager::QueryNeighTrie(Trie* t, const std::set<int>& multi_e, std::ve
         }
     }
 }
-

@@ -1,16 +1,16 @@
 /*
  *  Copyright (c) 2015 Vijay Ingalalli
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -134,7 +134,7 @@ void Trie::addSignatureDim(const std::vector<int>& s, const int& id)
 }
 
 
-void Trie::AddMultiedges(const std::set<int>& multiedge)
+void Trie::addMultiedges(const std::set<int>& multiedge)
 {
     Node* current = root;
 //    current->setContentInt(0); // to check if the Trie is empty or not |
@@ -165,7 +165,7 @@ void Trie::AddMultiedges(const std::set<int>& multiedge)
     }
 }
 
-void Trie::AddNonFreqEdges(const std::set<int>& multiedge)
+void Trie::addNonFreqEdges(const std::set<int>& multiedge)
 {
     Node* current = root;
     if (multiedge.empty()){
@@ -213,7 +213,7 @@ void Trie::IfEdgeExists(Node* n, std::set<int> s, bool& m_found){
 
 
 /// This is a superset containment approach
-bool Trie::EdgeExists(Node* n, std::set<int> s, int pos, bool& found){
+bool Trie::edgeExists(Node* n, std::set<int> s, int pos, bool& found){
 //    if(pos >= s.size() && !found) //
 //        return false;
     auto it = s.begin();
@@ -229,11 +229,10 @@ bool Trie::EdgeExists(Node* n, std::set<int> s, int pos, bool& found){
             }
             else if(pos < s.size()-1){
                 ++pos;
-                EdgeExists(child, s, pos, found);
+                edgeExists(child, s, pos, found);
             }
         }
         ++i;
     }
 //    return false;
 }
-

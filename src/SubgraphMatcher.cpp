@@ -1,16 +1,16 @@
 /*
  *  Copyright (c) 2015 Vijay Ingalalli
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -29,7 +29,7 @@ SubgraphMatcher::~SubgraphMatcher()
 }
 
 
-bool BitSetMatch(const std::vector<std::bitset<DIM>>& dataBitSet, const std::vector<std::bitset<DIM>>& queryBitSet)
+bool bitSetMatch(const std::vector<std::bitset<DIM>>& dataBitSet, const std::vector<std::bitset<DIM>>& queryBitSet)
 {
 	MaxMatch maxMatch;
     bool matched = false;
@@ -70,7 +70,7 @@ void chooseFrontier(const std::vector<int>& already_m, const Vector2D& queryAdja
     return;
 }
 
-void SubgraphMatcher::OrderVertices(const int& queryNodes, const EdgeLabel& queryNeighbourSign, const Vector2D& queryAdjacencyList, std::vector<int>& querySequence)
+void SubgraphMatcher::orderVertices(const int& queryNodes, const EdgeLabel& queryNeighbourSign, const Vector2D& queryAdjacencyList, std::vector<int>& querySequence)
 {
     std::vector<int> signRank;
     for (size_t i = 0; i < queryNodes; ++i) {
@@ -123,7 +123,7 @@ void SubgraphMatcher::OrderVertices(const int& queryNodes, const EdgeLabel& quer
 }
 
 
-void SubgraphMatcher::FindMatches(const std::vector<int>& initialMatches, GraphParameter& queryGraph, const VecOfSet& nodeMatches, IndexType& graphIndexes)
+void SubgraphMatcher::findMatches(const std::vector<int>& initialMatches, GraphParameter& queryGraph, const VecOfSet& nodeMatches, IndexType& graphIndexes)
 {
     Vector2D matchedQueryNeighbours(queryGraph.nNodes-1);
     std::vector<int> q_v;
@@ -153,7 +153,7 @@ void SubgraphMatcher::FindMatches(const std::vector<int>& initialMatches, GraphP
             }
             else {
                 if (incr){
-                    SubgraphSearch(queryGraph, graphIndexes, p_m, nodeMatches, matchedQueryNeighbours, matchedDataVertices, exactStack);
+                    subgraphSearch(queryGraph, graphIndexes, p_m, nodeMatches, matchedQueryNeighbours, matchedDataVertices, exactStack);
 		            if (double(clock() - stopTime) > MAX_ALLOWED_TIME) {
 		                queryGraph.timedOut = true;
 		                break;
@@ -179,7 +179,7 @@ void SubgraphMatcher::FindMatches(const std::vector<int>& initialMatches, GraphP
 }
 
 
-void SubgraphMatcher::SubgraphSearch(GraphParameter& queryGraph, IndexType& graphIndexes, const int& p_m, const VecOfSet& nodeMatches, const Vector2D& matchedQueryNeighbours, const std::vector<int>& matchedDataVertices, Vector2D& exact_stack)
+void SubgraphMatcher::subgraphSearch(GraphParameter& queryGraph, IndexType& graphIndexes, const int& p_m, const VecOfSet& nodeMatches, const Vector2D& matchedQueryNeighbours, const std::vector<int>& matchedDataVertices, Vector2D& exact_stack)
 {
     IndexManager dataIndex;
     int nextVertex = queryGraph.orderedNodes[p_m];
@@ -193,7 +193,7 @@ void SubgraphMatcher::SubgraphSearch(GraphParameter& queryGraph, IndexType& grap
     for(size_t i = 0; i < matchedQueryNeighbours[p_m-1].size(); ++i) {
         auto query_it = queryGraph.eLabelMap.find(std::make_pair(matchedQueryNeighbours[p_m-1][i], nextVertex));
         std::vector<int> nbrLblMatches;
-        dataIndex.QueryNeighTrie(graphIndexes.neighborTrie[matchedDataNeighbours[i]], query_it->second, nbrLblMatches);
+        dataIndex.queryNeighTrie(graphIndexes.neighborTrie[matchedDataNeighbours[i]], query_it->second, nbrLblMatches);
         if (!nbrLblMatches.empty()){
             if (i == 0) {
                 edgeMatches = nbrLblMatches;
@@ -227,34 +227,33 @@ void SubgraphMatcher::SubgraphSearch(GraphParameter& queryGraph, IndexType& grap
         for(auto it_e = exactMatches.begin(); it_e != exactMatches.end(); ++it_e) {
             auto dataEnd_it = matchedDataVertices.begin()+p_m;
             if (find(matchedDataVertices.begin(), dataEnd_it, (*it_e)) == dataEnd_it)
-	             //if (BitSetMatch(graphIndexes.bitSetMap[(*it_e)], queryGraph.bitSetMap[nextVertex]))
+	             //if (bitSetMatch(graphIndexes.bitSetMap[(*it_e)], queryGraph.bitSetMap[nextVertex]))
                     exact_stack[p_m-1].emplace_back((*it_e));
         }
-    }  
+    }
 }
 
 
-void SubgraphMatcher::FindEmbeddings(GraphParameter& queryGraph, IndexType& graphIndexes)
+void SubgraphMatcher::findEmbeddings(GraphParameter& queryGraph, IndexType& graphIndexes)
 {
     SubgraphMatcher subGraph;
-    subGraph.OrderVertices(queryGraph.nNodes, queryGraph.neighbourSign, queryGraph.adjacencyList, queryGraph.orderedNodes);
+    subGraph.orderVertices(queryGraph.nNodes, queryGraph.neighbourSign, queryGraph.adjacencyList, queryGraph.orderedNodes);
 
     /// Fetch the vertex attribute solutions for all the query vertices to be used when necessary.
+		IndexManager index;
     VecOfSet nodeMatches(queryGraph.nNodes);
+		index.queryAttHash(queryGraph.attributes, graphIndexes.attributeHash, nodeMatches);
+		// queryGraph.bitSetMap.resize(queryGraph.nNodes);
+    // index.buildBitSign(queryGraph.neighbourSign, queryGraph.nNodes, queryGraph.bitSetMap);
 
     // Find matches for the initial node
-    IndexManager index; 
-    queryGraph.bitSetMap.resize(queryGraph.nNodes);
-    index.BuildBitSign(queryGraph.neighbourSign, queryGraph.nNodes, queryGraph.bitSetMap);          
     std::vector<int> initialMatches;
     int initialVertex = queryGraph.orderedNodes[0];
     if (!queryGraph.neighbourSign[initialVertex].empty())
-        index.QuerySynTrie(queryGraph.neighbourSign[initialVertex], graphIndexes.synopsesTrie, initialMatches);
+        index.querySynTrie(queryGraph.neighbourSign[initialVertex], graphIndexes.synopsesTrie, initialMatches);
 
     /// Find all the  embeddings bounded by MAX_EMB, and then discovered the frequent patterns.
     if (!initialMatches.empty())
-        subGraph.FindMatches(initialMatches, queryGraph, nodeMatches, graphIndexes);
+        subGraph.findMatches(initialMatches, queryGraph, nodeMatches, graphIndexes);
 
 }
-
-

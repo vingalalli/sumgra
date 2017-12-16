@@ -1,16 +1,16 @@
 /*
  *  Copyright (c) 2015 Vijay Ingalalli
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -77,59 +77,55 @@ struct TimeEval{
 
 template <typename T>
 vector<T> sortIndex(const vector<T> &v) {
-
-  // initialize original index locations
-  vector<T> idx(v.size());
-  for (int i = 0; i != idx.size(); ++i) idx[i] = i;
-
-  // sort indexes based on comparing values in v
-  sort(idx.begin(), idx.end(), [&v](int i1, int i2) {return v[i1] > v[i2];});
-
-  return idx;
+    vector<T> idx(v.size());
+    for (int i = 0; i != idx.size(); ++i)
+        idx[i] = i;
+    sort(idx.begin(), idx.end(), [&v](int i1, int i2) {return v[i1] > v[i2];});
+    return idx;
 }
 
 template <typename T>
 std::vector<T> setMinus(std::vector<T> a, std::vector<T> b)
 {
-  std::vector<T> c(a.size()+b.size());
-  typename std::vector<T>::iterator it;
+    std::vector<T> c(a.size()+b.size());
+    typename std::vector<T>::iterator it;
 
-  std::sort (a.begin(), a.end());
-  std::sort (b.begin(), b.end());
+    std::sort (a.begin(), a.end());
+    std::sort (b.begin(), b.end());
 
-  it=std::set_difference (a.begin(), a.end(), b.begin(), b.end(), c.begin());
-  c.resize(it-c.begin());
-  return c;
+    it=std::set_difference (a.begin(), a.end(), b.begin(), b.end(), c.begin());
+    c.resize(it-c.begin());
+    return c;
 }
 
 
 template <typename T>
 std::vector<T> setUnion(std::vector<T> a, std::vector<T> b)
 {
-  std::vector<T> c(a.size()+b.size());
-  typename std::vector<T>::iterator it;
+    std::vector<T> c(a.size()+b.size());
+    typename std::vector<T>::iterator it;
 
-  std::sort (a.begin(), a.end());
-  std::sort (b.begin(), b.end());
+    std::sort (a.begin(), a.end());
+    std::sort (b.begin(), b.end());
 
-  it=std::set_union (a.begin(), a.end(), b.begin(), b.end(), c.begin());
-  c.resize(it-c.begin());
-  return c;
+    it=std::set_union (a.begin(), a.end(), b.begin(), b.end(), c.begin());
+    c.resize(it-c.begin());
+    return c;
 }
 
 
 template <typename T>
 std::vector<T> setIntersection(std::vector<T> a, std::vector<T> b)
 {
-  std::vector<T> c(a.size()+b.size());
-  typename std::vector<T>::iterator it;
+    std::vector<T> c(a.size()+b.size());
+    typename std::vector<T>::iterator it;
 
-  std::sort (a.begin(), a.end());
-  std::sort (b.begin(), b.end());
+    std::sort (a.begin(), a.end());
+    std::sort (b.begin(), b.end());
 
-  it=std::set_intersection (a.begin(), a.end(), b.begin(), b.end(), c.begin());
-  c.resize(it-c.begin());
-  return c;
+    it=std::set_intersection (a.begin(), a.end(), b.begin(), b.end(), c.begin());
+    c.resize(it-c.begin());
+    return c;
 }
 
 class FileManager
@@ -137,12 +133,12 @@ class FileManager
     public:
         FileManager();
         virtual ~FileManager();
-        void ReadContents(const std::string& nodeFile, const std::string& edgeFile, GraphParameter& graphInfo);
-	    void printTime(TimeEval& timeEval, std::string& timeFile, const GraphParameter& queryGraph, int i);      
-	    void createNew(const std::string& timeFile);	         
-	    void printEmbeddings(const GraphParameter& queryGraph, std::string& embFile);
+        void readContents(const std::string& nodeFile, const std::string& edgeFile, GraphParameter& graphInfo);
+        void printTime(TimeEval& timeEval, std::string& timeFile, const GraphParameter& queryGraph, int i);
+        void createNew(const std::string& timeFile);
+        void printEmbeddings(const GraphParameter& queryGraph, std::string& embFile);
     protected:
-        void SplitString(const std::string& str, char chr, std::vector<std::string>& strs);      
+        void splitString(const std::string& str, char chr, std::vector<std::string>& strs);
 };
 
 
