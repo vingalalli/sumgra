@@ -1,7 +1,9 @@
 About
 -----
-The current version of Sumgra can handle undirected multigraphs with/without vertex labels. This release works on linux machines.
+Sumgra is an algorithm for discovering isomorphic embeddings in a multigraph. The current version of Sumgra can handle undirected multigraphs with/without vertex labels. This release works on linux machines.
 
+For more details, check our paper:
+Vijay Ingalalli, Dino Ienco, and Pascal Poncelet. "SuMGra: Querying Multigraphs via Efficient Indexing." International Conference on Database and Expert Systems Applications. Springer International Publishing, 2016.
 
 I. Running sumgra
 -----------------
@@ -32,12 +34,12 @@ III. File formats
 
 2. Format for *edges.txt: [ node1 node2 multiedge], where a multiedge is represented by comma separated edge-ids.
 
-3. Format for *nodes.txt: [ -1 ], for multigraphs without vertex labels, where each vertex is represented by '-1';
+3. Format for *nodes.txt: [ -1 ], for multigraphs without vertex labels, where each vertex is to be labeled as '-1';
 		       [ v_labels ], for multigraphs with vertex labels, where 'v_labels' is represented by comma separated vertex labels
 
 4. A sample data, query and result files are available at '../sumgra/dataset/sample/' for multigraphs without vertex labels
 5. A sample data, query and result files are available at '../sumgra/dataset/sample_vtx_labels/' for multigraphs with vertex labels
 
-NB: For a vertex labeled multigraph, any unlabeled vertex is to be represented by '-1'
+NB: For a vertex labeled multigraph, any unlabeled vertex (in both data and query files) has to be labeled as '-1'
 
 ***
