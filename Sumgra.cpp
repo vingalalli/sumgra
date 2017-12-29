@@ -21,58 +21,58 @@
 
 int main(int argc, char* argv[])
 {
-		std::string dataPath = argv[1];
-		std::string queryPath = argv[2];
-		std::string resultPath = argv[3];
-		std::string nQueries = argv[4];
-		std::string printEmb = argv[5];
+	std::string dataPath = argv[1];
+	std::string queryPath = argv[2];
+	std::string resultPath = argv[3];
+	std::string nQueries = argv[4];
+	std::string printEmb = argv[5];
 
-	  /// Read data graph
-	  cout << "Reading data files..." << endl;
-	  std::string nodeFile = dataPath + "nodes.txt";
-	  std::string edgeFile = dataPath + "edges.txt";
-	  GraphParameter dataGraph;
-	  FileManager dataGraphInfo;
-	  dataGraphInfo.readContents(nodeFile, edgeFile, dataGraph);
+	/// Read data graph
+	cout << "Reading data files..." << endl;
+	std::string nodeFile = dataPath + "nodes.txt";
+	std::string edgeFile = dataPath + "edges.txt";
+	GraphParameter dataGraph;
+	FileManager dataGraphInfo;
+	dataGraphInfo.readContents(nodeFile, edgeFile, dataGraph);
 
-	  /// Build data graph indexes
-	  cout << "Building indexes..." << endl;
-	  IndexManager graphDB;
-	  IndexType graphIndexes;
-	  TimeEval timeEval;
-		clock_t start = clock();
-	  graphDB.buildIndexes(dataGraph, graphIndexes);
-		timeEval.buildIndex = double(clock()- start)/CLOCKS_PER_SEC;
+	/// Build data graph indexes
+	cout << "Building indexes..." << endl;
+	IndexManager graphDB;
+	IndexType graphIndexes;
+	TimeEval timeEval;
+	clock_t start = clock();
+	graphDB.buildIndexes(dataGraph, graphIndexes);
+	timeEval.buildIndex = double(clock()- start)/CLOCKS_PER_SEC;
 
-		/// Query processing
-	  int qN = std::stoi(nQueries), i = 0;
-		std::string timeFile = resultPath + "time.txt";
-		FileManager writeFile;
-		writeFile.createNew(timeFile);
-		cout << "Reading query files..." << endl;
-	  while(i < qN){
-		  	/// Read query graph
-				std::string nodeFile = queryPath + std::to_string(i) + "_nodes.txt";
-				std::string edgeFile = queryPath + std::to_string(i) + "_edges.txt";
-				GraphParameter queryGraph;
-				FileManager queryGraphInfo;
-				queryGraphInfo.readContents(nodeFile, edgeFile, queryGraph);
+	/// Query processing
+	int qN = std::stoi(nQueries), i = 0;
+	std::string timeFile = resultPath + "time.txt";
+	FileManager writeFile;
+	writeFile.createNew(timeFile);
+	cout << "Reading query files..." << endl;
+	while(i < qN){
+		/// Read query graph
+		std::string nodeFile = queryPath + std::to_string(i) + "_nodes.txt";
+		std::string edgeFile = queryPath + std::to_string(i) + "_edges.txt";
+		GraphParameter queryGraph;
+		FileManager queryGraphInfo;
+		queryGraphInfo.readContents(nodeFile, edgeFile, queryGraph);
 
-				/// Perfrom subgraph matching
-				SubgraphMatcher subGraph;
-				start = clock();
-				subGraph.findEmbeddings(queryGraph, graphIndexes);
-				timeEval.queryMatch =  double(clock()- start)/CLOCKS_PER_SEC;
-		    cout << i << ": " << queryGraph.embeddings.size() <<  " embeddings found" << endl;
-		    //cout << "Time: " << timeEval.queryMatch << endl;
+		/// Perfrom subgraph matching
+		SubgraphMatcher subGraph;
+		start = clock();
+		subGraph.findEmbeddings(queryGraph, graphIndexes);
+		timeEval.queryMatch =  double(clock()- start)/CLOCKS_PER_SEC;
+		cout << i << ": " << queryGraph.embeddings.size() <<  " embeddings found" << endl;
+		//cout << "Time: " << timeEval.queryMatch << endl;
 
-				/// Collect results
-				writeFile.printTime(timeEval, timeFile, queryGraph, i); // #embeddings, query time consumption
-				if(printEmb == "yes"){ // Print embeddings
-					std::string embFile = resultPath + std::to_string(i) + "_emb.txt";
-					writeFile.printEmbeddings(queryGraph, embFile);
-				}
-				++i;
+		/// Collect results
+		writeFile.printTime(timeEval, timeFile, queryGraph, i); // #embeddings, query time consumption
+		if(printEmb == "yes"){ // Print embeddings
+			std::string embFile = resultPath + std::to_string(i) + "_emb.txt";
+			writeFile.printEmbeddings(queryGraph, embFile);
 		}
-		return 0;
+		++i;
+	}
+	return 0;
 }
