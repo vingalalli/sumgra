@@ -1,4 +1,4 @@
-About
+About:
 -----
 Sumgra is an algorithm for discovering isomorphic embeddings in a multigraph. The current version of Sumgra can handle undirected multigraphs with/without vertex labels. This release works on linux machines.
 
