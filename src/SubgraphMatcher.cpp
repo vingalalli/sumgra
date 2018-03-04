@@ -247,10 +247,20 @@ void SubgraphMatcher::findEmbeddings(GraphParameter& queryGraph, IndexType& grap
     // index.buildBitSign(queryGraph.neighbourSign, queryGraph.nNodes, queryGraph.bitSetMap);
 
     // Find matches for the initial node
-    std::vector<int> initialMatches;
+    std::vector<int> initialEdgeMatches;
     int initialVertex = queryGraph.orderedNodes[0];
     if (!queryGraph.neighbourSign[initialVertex].empty())
-        index.querySynTrie(queryGraph.neighbourSign[initialVertex], graphIndexes.synopsesTrie, initialMatches);
+        index.querySynTrie(queryGraph.neighbourSign[initialVertex], graphIndexes.synopsesTrie, initialEdgeMatches);
+
+		std::vector<int> initialMatches;
+    if (!nodeMatches[0].empty()) { // Filter the 'initialEdgeMatches' with node label constraints |
+        for (size_t i = 0; i < initialEdgeMatches.size(); ++i){
+            if (nodeMatches[0].find(initialEdgeMatches[i]) != nodeMatches[0].end())
+                initialMatches.push_back(initialEdgeMatches[i]);
+        }
+    }
+    else
+        initialMatches=initialEdgeMatches;
 
     /// Find all the  embeddings bounded by MAX_EMB, and then discovered the frequent patterns.
     if (!initialMatches.empty())
