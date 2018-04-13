@@ -215,9 +215,9 @@ void SubgraphMatcher::subgraphSearch(GraphParameter& queryGraph, IndexType& grap
 
     if (allNbrsMatched) {
         std::vector<int> exactMatches;
-        if (!nodeMatches[p_m].empty()) { // Find the common elements between edge labels and node labels |
+        if (!nodeMatches[nextVertex].empty()) { // Find the common elements between edge labels and node labels |
             for (size_t i = 0; i < edgeMatches.size(); ++i){
-                if (nodeMatches[p_m].find(edgeMatches[i]) != nodeMatches[p_m].end())
+                if (nodeMatches[nextVertex].find(edgeMatches[i]) != nodeMatches[nextVertex].end())
                     exactMatches.push_back(edgeMatches[i]);
             }
         }
@@ -241,7 +241,7 @@ void SubgraphMatcher::findEmbeddings(GraphParameter& queryGraph, IndexType& grap
 
     /// Fetch the vertex attribute solutions for all the query vertices to be used when necessary.
 		IndexManager index;
-    VecOfSet nodeMatches(queryGraph.nNodes);
+    VecOfSet nodeMatches(queryGraph.nNodes);	// maintains matched lables in the natural order, not query order.
 		index.queryAttHash(queryGraph.attributes, graphIndexes.attributeHash, nodeMatches);
 		// queryGraph.bitSetMap.resize(queryGraph.nNodes);
     // index.buildBitSign(queryGraph.neighbourSign, queryGraph.nNodes, queryGraph.bitSetMap);
@@ -253,9 +253,9 @@ void SubgraphMatcher::findEmbeddings(GraphParameter& queryGraph, IndexType& grap
         index.querySynTrie(queryGraph.neighbourSign[initialVertex], graphIndexes.synopsesTrie, initialEdgeMatches);
 
 		std::vector<int> initialMatches;
-    if (!nodeMatches[0].empty()) { // Filter the 'initialEdgeMatches' with node label constraints |
+    if (!nodeMatches[initialVertex].empty()) { // Filter the 'initialEdgeMatches' with node label constraints |
         for (size_t i = 0; i < initialEdgeMatches.size(); ++i){
-            if (nodeMatches[0].find(initialEdgeMatches[i]) != nodeMatches[0].end())
+            if (nodeMatches[initialVertex].find(initialEdgeMatches[i]) != nodeMatches[initialVertex].end())
                 initialMatches.push_back(initialEdgeMatches[i]);
         }
     }
