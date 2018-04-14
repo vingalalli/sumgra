@@ -81,6 +81,7 @@ void FileManager::readContents(const std::string& nodeFile, const std::string& e
             if (it == node_m.end()) {
                 node_m.insert(make_pair(edgeContent.at(0), n));
                 node1 = n;
+                graphInfo.inNodes.push_back(std::stoi(edgeContent.at(0)));
                 ++n;
             }
             else
@@ -89,6 +90,7 @@ void FileManager::readContents(const std::string& nodeFile, const std::string& e
             if (it == node_m.end()) {
                 node_m.insert(make_pair(edgeContent.at(1), n));
                 node2 = n;
+                graphInfo.inNodes.push_back(std::stoi(edgeContent.at(1)));
                 ++n;
             }
             else
@@ -155,7 +157,7 @@ void FileManager::printTime(TimeEval& timeEval, std::string& timeFile, const Gra
         outFile << i << "\t" << queryGraph.embeddings.size() << "\t" << timeEval.queryMatch << endl;	// Time in seconds
 }
 
-void FileManager::printEmbeddings(const GraphParameter& queryGraph, std::string& embFile)
+void FileManager::printEmbeddings(const GraphParameter& queryGraph, const std::vector<int>& dataInNodes, std::string& embFile)
 {
     if(queryGraph.timedOut){
     		cout << "Query timed out. No embeddings to print!" << endl;
@@ -164,11 +166,11 @@ void FileManager::printEmbeddings(const GraphParameter& queryGraph, std::string&
   	ofstream outFile;
   	outFile.open(embFile);
         for (size_t j = 0; j < queryGraph.orderedNodes.size(); ++j)
-            outFile << queryGraph.orderedNodes[j] << "\t" ;
+            outFile << queryGraph.inNodes[queryGraph.orderedNodes[j]] << "\t" ;
         outFile << endl;
   	for(size_t i = 0; i < queryGraph.embeddings.size(); ++i){
         for(size_t j = 0; j < queryGraph.orderedNodes.size(); ++j)
-            outFile << queryGraph.embeddings[i][j] << "\t";
+            outFile << dataInNodes[queryGraph.embeddings[i][j]] << "\t";
         outFile << endl;
   	}
   	outFile.close();

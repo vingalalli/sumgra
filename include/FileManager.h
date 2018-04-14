@@ -65,6 +65,7 @@ struct GraphParameter {
     std::vector<int> dataNodes;
     EdgeLabelBit bitSetMap;
     std::vector<int> orderedNodes;
+    std::vector<int> inNodes;  // original_id necessary for outuputting the solutions by reverse mapping.
     Vector2D embeddings;
     bool timedOut = false;
 };
@@ -136,7 +137,7 @@ class FileManager
         void readContents(const std::string& nodeFile, const std::string& edgeFile, GraphParameter& graphInfo);
         void printTime(TimeEval& timeEval, std::string& timeFile, const GraphParameter& queryGraph, int i);
         void createNew(const std::string& timeFile);
-        void printEmbeddings(const GraphParameter& queryGraph, std::string& embFile);
+        void printEmbeddings(const GraphParameter& queryGraph, const std::vector<int>& dataInNodes, std::string& embFile);
     protected:
         void splitString(const std::string& str, char chr, std::vector<std::string>& strs);
 };

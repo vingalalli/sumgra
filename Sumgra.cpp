@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
 		writeFile.printTime(timeEval, timeFile, queryGraph, i); // #embeddings, query time consumption
 		if(printEmb == "yes"){ // Print embeddings
 			std::string embFile = resultPath + std::to_string(i) + "_emb.txt";
-			writeFile.printEmbeddings(queryGraph, embFile);
+			writeFile.printEmbeddings(queryGraph, dataGraph.inNodes, embFile);
 		}
 		++i;
 	}

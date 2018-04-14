@@ -133,7 +133,6 @@ void SubgraphMatcher::findMatches(const std::vector<int>& initialMatches, GraphP
         matchedQueryNeighbours[i] = setIntersection(queryGraph.adjacencyList[nextVertex], q_v);
         q_v.push_back(nextVertex);
     }
-
     std::vector<int> matchedDataVertices(queryGraph.nNodes);
     clock_t stopTime = clock();
     /// Iterative Approach for Subgraph Isomorphic Matching

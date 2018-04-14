@@ -23,6 +23,6 @@ Trie.o: src/Trie.cpp include/Trie.h
 MaxMatch.o: src/MaxMatch.cpp include/MaxMatch.h
 	$(CC) $(CFLAGS) $(INCLUDES) src/MaxMatch.cpp	
 
-clean: Sumgra *.o
+clean:
 	rm sumgra
-	rm *.o
+	rm -f *.o
