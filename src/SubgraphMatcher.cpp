@@ -214,9 +214,9 @@ void SubgraphMatcher::subgraphSearch(GraphParameter& queryGraph, IndexType& grap
 
     if (allNbrsMatched) {
         std::vector<int> exactMatches;
-        if (!nodeMatches[nextVertex].empty()) { // Find the common elements between edge labels and node labels |
+        if (!nodeMatches[queryGraph.inNodes[nextVertex]].empty()) { // Find the common elements between edge labels and node labels |
             for (size_t i = 0; i < edgeMatches.size(); ++i){
-                if (nodeMatches[nextVertex].find(edgeMatches[i]) != nodeMatches[nextVertex].end())
+                if (nodeMatches[queryGraph.inNodes[nextVertex]].find(edgeMatches[i]) != nodeMatches[queryGraph.inNodes[nextVertex]].end())
                     exactMatches.push_back(edgeMatches[i]);
             }
         }
@@ -252,15 +252,14 @@ void SubgraphMatcher::findEmbeddings(GraphParameter& queryGraph, IndexType& grap
         index.querySynTrie(queryGraph.neighbourSign[initialVertex], graphIndexes.synopsesTrie, initialEdgeMatches);
 
 		std::vector<int> initialMatches;
-    if (!nodeMatches[initialVertex].empty()) { // Filter the 'initialEdgeMatches' with node label constraints |
+    if (!nodeMatches[queryGraph.inNodes[initialVertex]].empty()) { // Filter the 'initialEdgeMatches' with node label constraints |
         for (size_t i = 0; i < initialEdgeMatches.size(); ++i){
-            if (nodeMatches[initialVertex].find(initialEdgeMatches[i]) != nodeMatches[initialVertex].end())
+            if (nodeMatches[queryGraph.inNodes[initialVertex]].find(initialEdgeMatches[i]) != nodeMatches[queryGraph.inNodes[initialVertex]].end())
                 initialMatches.push_back(initialEdgeMatches[i]);
         }
     }
     else
         initialMatches=initialEdgeMatches;
-
     /// Find all the  embeddings bounded by MAX_EMB, and then discovered the frequent patterns.
     if (!initialMatches.empty())
         subGraph.findMatches(initialMatches, queryGraph, nodeMatches, graphIndexes);

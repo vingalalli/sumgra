@@ -66,7 +66,7 @@ void FileManager::readContents(const std::string& nodeFile, const std::string& e
     /// Reading edge file
     const char * eF = edgeFile.c_str();
     std::ifstream eFile (eF);
-    std::map<std::string, int> node_m; // < original_id, mapped_id >
+    std::map<int, int> node_m; // < original_id, mapped_id >
 
     if (eFile.is_open()) {
         std::string multiEdge;
@@ -77,20 +77,22 @@ void FileManager::readContents(const std::string& nodeFile, const std::string& e
             std::vector<std::string> edgeContent;
             splitString(multiEdge, ' ', edgeContent);
             int node1; int node2;
-            auto it = node_m.find(edgeContent.at(0));
+            int nodeIn1 =  std::stoi(edgeContent.at(0));
+            int nodeIn2 =  std::stoi(edgeContent.at(1));
+            auto it = node_m.find(nodeIn1);
             if (it == node_m.end()) {
-                node_m.insert(make_pair(edgeContent.at(0), n));
+                node_m.insert(make_pair(nodeIn1, n));
                 node1 = n;
-                graphInfo.inNodes.push_back(std::stoi(edgeContent.at(0)));
+                graphInfo.inNodes.push_back(nodeIn1);
                 ++n;
             }
             else
                 node1 = it->second;
-            it = node_m.find(edgeContent.at(1));
+            it = node_m.find(nodeIn2);
             if (it == node_m.end()) {
-                node_m.insert(make_pair(edgeContent.at(1), n));
+                node_m.insert(make_pair(nodeIn2, n));
                 node2 = n;
-                graphInfo.inNodes.push_back(std::stoi(edgeContent.at(1)));
+                graphInfo.inNodes.push_back(nodeIn2);
                 ++n;
             }
             else
@@ -130,6 +132,9 @@ void FileManager::readContents(const std::string& nodeFile, const std::string& e
         }
         graphInfo.adjacencyList = adjListTemp;
         graphInfo.neighbourSign = edgeLabels;
+        graphInfo.sumgraNodes.resize(graphInfo.inNodes.size());
+        for(size_t i = 0; i < graphInfo.inNodes.size(); ++i)
+          graphInfo.sumgraNodes[i] = node_m.find(i)->second;
     }
     else {
         cout << "Unable to open *edge file" << endl;

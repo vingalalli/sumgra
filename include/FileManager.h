@@ -54,7 +54,6 @@ typedef std::unordered_map<int, std::set<int>> AttMap;
 
 struct GraphParameter {
     int nNodes;
-    std::vector<int> nodes;
     VecOfSet attributes;
     bool nodeLabelsExist;
     GraphParameter() : edges(2) {}
@@ -62,10 +61,10 @@ struct GraphParameter {
     EdgeLabel neighbourSign;
     Vector2D adjacencyList;
     EdgeLabelMap eLabelMap;
-    std::vector<int> dataNodes;
     EdgeLabelBit bitSetMap;
     std::vector<int> orderedNodes;
-    std::vector<int> inNodes;  // original_id necessary for outuputting the solutions by reverse mapping.
+    std::vector<int> inNodes;  // node_id in the order they appear in 'edges.txt', necessary for outuputting the solutions by reverse mapping.
+    std::vector<int> sumgraNodes; // sumgra_id that correspond to he natural order of inNodes, necessary for building attribute index.
     Vector2D embeddings;
     bool timedOut = false;
 };

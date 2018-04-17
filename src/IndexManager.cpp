@@ -32,7 +32,7 @@ void IndexManager::buildIndexes(GraphParameter& dataGraphInfo, IndexType& indexT
 {
     sortSignature(dataGraphInfo.neighbourSign, dataGraphInfo.orderedNodes, dataGraphInfo.nNodes); // sort the neighborhood signature with decreasing size of the number of neighbors |
 
-    buildAttHash(dataGraphInfo.attributes, indexType.attributeHash);
+    buildAttHash(dataGraphInfo.attributes, dataGraphInfo.sumgraNodes, indexType.attributeHash);
     buildSynTrie(dataGraphInfo.neighbourSign, dataGraphInfo.nNodes, indexType.synopsesTrie);
 
     indexType.bitSetMap.resize(dataGraphInfo.nNodes);
@@ -43,7 +43,7 @@ void IndexManager::buildIndexes(GraphParameter& dataGraphInfo, IndexType& indexT
 
 }
 
-void IndexManager::buildAttHash(const VecOfSet& attSign, AttMap& attributeHash)  // A vertex with no attribute should have '-1' assigned to it in the text file |
+void IndexManager::buildAttHash(const VecOfSet& attSign, const std::vector<int> sumgraNodes, AttMap& attributeHash)  // A vertex with no attribute should have '-1' assigned to it in the text file |
 {
     for (size_t i = 0; i < attSign.size(); ++i) {
         if ( !(attSign[i].size() == 1 && (*attSign[i].begin()) == -1) ) { // map only vertexes that have labels |
@@ -51,11 +51,11 @@ void IndexManager::buildAttHash(const VecOfSet& attSign, AttMap& attributeHash) 
                 auto it_m = attributeHash.find((*it_a));
                 if (it_m == attributeHash.end()) {
                     std::set<int> attTmp;
-                    attTmp.insert(i);
+                    attTmp.insert(sumgraNodes[i]);
                     attributeHash.insert(make_pair((*it_a), attTmp));
                 }
                 else
-                    it_m->second.insert(i);
+                    it_m->second.insert(sumgraNodes[i]);
             }
         }
     }

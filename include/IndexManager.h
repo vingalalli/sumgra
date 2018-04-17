@@ -50,7 +50,7 @@ class IndexManager
         IndexManager();
         virtual ~IndexManager();
         void buildIndexes(GraphParameter& dataGraphInfo, IndexType& indexType);
-        void buildAttHash(const VecOfSet& attSign, AttMap& attributeHash);
+        void buildAttHash(const VecOfSet& attSign, const std::vector<int> sumgraNodes, AttMap& attributeHash);
         void queryAttHash(const VecOfSet& queryAtt, const AttMap& attributeHash, VecOfSet&  attMatches);
         void createSynopses(const std::vector<std::set<int>>& signature, std::vector<short>& synopses);
         void sortSignature(EdgeLabel& neighbourSign, std::vector<int>& sortedNodes, const int& elements);
